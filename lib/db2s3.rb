@@ -40,8 +40,8 @@ class DB2S3
       to_keep << backups_for_week.sort_by{|x| x[:date].strftime("%Y%m%d") }.first
     end
 
-    to_destroy = filelist - to_keep.uniq.collect {|x| x[:path] }
-    to_destroy.delete_if {|x| x.ends_with?(most_recent_dump_file_name) }
+    to_destroy = filelist - to_keep.uniq.collect { |x| x[:path] }
+    to_destroy.delete_if { |x| x.ends_with?(most_recent_dump_file_name) }
     to_destroy.each do |file|
       store.delete(file.split('/').last)
     end
@@ -134,7 +134,7 @@ class DB2S3
 
     def list
       ensure_connected
-      AWS::S3::Bucket.find(bucket).objects.collect { |x| x.path }
+      AWS::S3::Bucket.find(bucket).objects(:prefix => "db/dump-").collect { |x| x.path }
     end
 
     def delete(file_name)
