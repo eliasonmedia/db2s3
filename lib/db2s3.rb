@@ -116,16 +116,16 @@ class DB2S3
 
     def store(file_name, file)
       ensure_connected
-      AWS::S3::S3Object.store(file_name, file, bucket)
+      AWS::S3::S3Object.store(path_to(file_name), file, bucket)
     end
 
     def fetch(file_name)
       ensure_connected
-      AWS::S3::S3Object.find(file_name, bucket)
+      AWS::S3::S3Object.find(path_to(file_name), bucket)
 
       file = Tempfile.new("dump")
       open(file.path, 'w') do |f|
-        AWS::S3::S3Object.stream(file_name, bucket) do |chunk|
+        AWS::S3::S3Object.stream(path_to(file_name), bucket) do |chunk|
           f.write chunk
         end
       end
@@ -134,11 +134,11 @@ class DB2S3
 
     def list
       ensure_connected
-      AWS::S3::Bucket.find(bucket).objects.collect {|x| x.path }
+      AWS::S3::Bucket.find(bucket).objects.collect { |x| x.path }
     end
 
     def delete(file_name)
-      if object = AWS::S3::S3Object.find(file_name, bucket)
+      if object = AWS::S3::S3Object.find(path_to(file_name), bucket)
         object.delete
       end
     end
@@ -146,11 +146,15 @@ class DB2S3
   private
 
     def config
-      Yaml.load(File.join(Rails.root, "config", "asset_id.yml"))[Rails.env]
+      YAML.load(File.read(File.join(Rails.root, "config", "asset_id.yml")))[Rails.env].symbolize_keys
     end
 
     def bucket
       config[:bucket]
+    end
+
+    def path_to(file_name)
+      "db/#{file_name}"
     end
   end
 
