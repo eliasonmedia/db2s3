@@ -1,18 +1,8 @@
-begin
-  require 'activesupport' # The old one
-rescue LoadError
-  require 'active_support' # The new one
-end
+require 'active_support'
 require 'aws/s3'
 require 'tempfile'
 
 class DB2S3
-  class Config
-  end
-
-  def initialize
-  end
-
   def full_backup
     file_name = "dump-#{db_credentials[:database]}-#{Time.now.utc.strftime("%Y%m%d%H%M")}.sql.gz"
     store.store(file_name, open(dump_db.path))
@@ -58,7 +48,7 @@ class DB2S3
   end
 
   def statistics
-      # From http://mysqlpreacher.com/wordpress/tag/table-size/
+    # From http://mysqlpreacher.com/wordpress/tag/table-size/
     results = ActiveRecord::Base.connection.execute(<<-EOS)
     SELECT
       engine,
@@ -80,7 +70,6 @@ class DB2S3
   def dump_db
     dump_file = Tempfile.new("dump")
 
-    #cmd = "mysqldump --quick --single-transaction --create-options -u#{db_credentials[:user]} --flush-logs --master-data=2 --delete-master-logs"
     cmd = "mysqldump --quick --single-transaction --create-options #{mysql_options}"
     cmd += " | gzip > #{dump_file.path}"
     run(cmd)
@@ -120,7 +109,7 @@ class DB2S3
 
     def ensure_connected
       return if @connected
-      AWS::S3::Base.establish_connection!(DB2S3::Config::S3.slice(:access_key_id, :secret_access_key).merge(:use_ssl => true))
+      AWS::S3::Base.establish_connection!(config.slice(:access_key_id, :secret_access_key).merge(:use_ssl => true))
       AWS::S3::Bucket.create(bucket)
       @connected = true
     end
@@ -154,10 +143,14 @@ class DB2S3
       end
     end
 
-    private
+  private
+
+    def config
+      Yaml.load(File.join(Rails.root, "config", "asset_id.yml"))[Rails.env]
+    end
 
     def bucket
-      DB2S3::Config::S3[:bucket]
+      config[:bucket]
     end
   end
 
