@@ -5,13 +5,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{db2s3}
-  s.version = "0.3.2"
+  s.version = "0.3.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Xavier Shay"]
+  s.authors = ["Tom Sommer"]
   s.date = %q{2010-10-22}
   s.description = %q{db2s3 provides rake tasks for backing up and restoring your DB to S3}
-  s.email = %q{contact@rhnh.net}
+  s.email = %q{tom@cafeconcierge.com}
   s.extra_rdoc_files = [
     "README.rdoc"
   ]
@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
      "spec/spec_helper.rb",
      "tasks/tasks.rake"
   ]
-  s.homepage = %q{http://github.com/xaviershay/db2s3}
+  s.homepage = %q{https://github.com/cafeconcierge/db2s3}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
