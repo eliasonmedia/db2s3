@@ -4,6 +4,9 @@ require 'tempfile'
 require File.dirname(__FILE__) + '/railtie' if defined?(Rails::Railtie)
 
 class DB2S3
+  class Config
+  end
+
   def full_backup
     file_name = "dump-#{db_credentials[:database]}-#{Time.now.utc.strftime("%Y%m%d%H%M")}.sql.gz"
     store.store(file_name, open(dump_db.path))
@@ -110,7 +113,7 @@ class DB2S3
 
     def ensure_connected
       return if @connected
-      AWS::S3::Base.establish_connection!(config.slice(:access_key_id, :secret_access_key).merge(:use_ssl => true))
+      AWS::S3::Base.establish_connection!(DB2S3::Config::S3.slice(:access_key_id, :secret_access_key).merge(:use_ssl => true))
       AWS::S3::Bucket.create(bucket)
       @connected = true
     end
@@ -146,12 +149,8 @@ class DB2S3
 
   private
 
-    def config
-      YAML.load(File.read(File.join(Rails.root, "config", "asset_id.yml")))[Rails.env].symbolize_keys
-    end
-
     def bucket
-      config[:bucket]
+      DB2S3::Config::S3[:bucket]
     end
 
     def path_to(file_name)
