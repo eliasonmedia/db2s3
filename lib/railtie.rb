@@ -1,4 +1,4 @@
-require 'my_plugin'
+require 'db2s3'
 require 'rails'
 
 class Railtie < Rails::Railtie
