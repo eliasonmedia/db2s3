@@ -5,6 +5,6 @@ class Railtie < Rails::Railtie
   railtie_name :db2s3
 
   rake_tasks do
-    load "tasks/tasks.rake"
+    load 'delayed/tasks.rb'
   end
 end

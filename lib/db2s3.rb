@@ -1,7 +1,7 @@
 require 'active_support'
 require 'aws/s3'
 require 'tempfile'
-require 'railtie' if defined?(Rails)
+require File.dirname(__FILE__) + '/railtie' if defined?(Rails::Railtie)
 
 class DB2S3
   def full_backup
