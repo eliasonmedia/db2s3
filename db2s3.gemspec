@@ -16,7 +16,6 @@ Gem::Specification.new do |s|
     "README.rdoc"
   ]
   s.files = [
-    ".gitignore",
      "HISTORY",
      "README.rdoc",
      "Rakefile",
