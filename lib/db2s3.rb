@@ -113,7 +113,7 @@ class DB2S3
     else
       cmd = "tar -czv -C #{Rails.root} #{folders.join(' ')} > #{archive_file.path}"
       run(cmd)
-      return archive_file.path 
+      return archive_file
     end
   end
   def run(command)
