@@ -8,10 +8,14 @@ class DB2S3
   end
 
   def full_backup
-    file_name = "dump-#{db_credentials[:database]}-#{Time.now.utc.strftime("%Y%m%d%H%M")}.sql.gz"
+    db_file_name = "db-dump-#{db_credentials[:database]}-#{Time.now.utc.strftime("%Y%m%d%H%M")}.sql.gz"
+    assets_file_name = "assets-dump-#{Time.now.utc.strftime("%Y%m%d%H%M")}.tar.gz"
     database = dump_db
-    store.store(file_name, open(dump_db.path))
-    store.store(most_recent_dump_file_name, file_name)
+    assets = backup_assets
+    store.store(db_file_name, open(database.path))
+    store.store(assets_file_name, open(assets.path))
+    store.store(most_recent_db_dump_file_name, db_file_name)
+    store.store(most_recent_assets_dump_file_name, assets_file_name)
   end
 
   def restore
@@ -94,8 +98,11 @@ class DB2S3
     @store ||= S3Store.new
   end
 
-  def most_recent_dump_file_name
-    "most-recent-dump-#{db_credentials[:database]}.txt"
+  def most_recent_db_dump_file_name
+    "most-recent-db-dump-#{db_credentials[:database]}.txt"
+  end
+  def most_recent_assets_dump_file_name
+    "most-recent-assets_dump.txt"
   end
   def backup_assets
     archive_file = Tempfile.new('archive')
@@ -104,7 +111,7 @@ class DB2S3
     if folders.blank?
       return nil
     else
-      cmd = "tar -cv -C #{Rails.root} #{folders.join(' ')} > #{archive_file.path}"
+      cmd = "tar -czv -C #{Rails.root} #{folders.join(' ')} > #{archive_file.path}"
       run(cmd)
       return archive_file.path 
     end
