@@ -111,7 +111,7 @@ class DB2S3
     if folders.blank?
       return nil
     else
-      cmd = "tar -czv -C #{Rails.root} #{folders.join(' ')} > #{archive_file.path}"
+      cmd = "tar -czhv -C #{Rails.root} #{folders.join(' ')} > #{archive_file.path}"
       run(cmd)
       return archive_file
     end
