@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Sommer", "Phil Smy", 'Sean McCullough']
-  s.date = %q{2011-7-12}
+  s.date = %q{2010-08-06}
   s.description = %q{db2s3 provides rake tasks for backing up and restoring your DB and assets to S3}
   s.email = %q{sean@eliasonmedia.com}
   s.extra_rdoc_files = [
